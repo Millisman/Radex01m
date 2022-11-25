@@ -14,7 +14,7 @@ RF24 radio(PIN_A0, 10); //cepin, cspin
 uint8_t address[][6] = {"xMain", "xRemo"};
 
 void setup_radio() {
-
+    
     memset(&pkt, 0, sizeof(Radio_Packet_Type));
     
     for (uint8_t i=0; i < NUM_DEV; ++i) {
@@ -77,7 +77,6 @@ void do_radio() {
         for (uint8_t i=0; i < NUM_DEV; ++i) {
             if ((pkt.DevSerNum == Devices[i].DevSerNum) || (Devices[i].DevSerNum == 0)) {
                 memcpy(&Devices[i], &pkt, sizeof(Radio_Packet_Type));
-                Serial.println(F("Append device"));
                 break;
             }
         }
