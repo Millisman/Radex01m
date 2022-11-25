@@ -72,13 +72,38 @@ void do_radio() {
     if (radio.available(&pipe)) {
         radio.read(&pkt, sizeof(Radio_Packet_Type)); // fetch payload from FIFO
         Serial.print(F("Read pipe:")); Serial.println(pipe, DEC);
-        dump_Radio_Packet(&pkt);
+//         dump_Radio_Packet(&pkt);
 
+        
+        int8_t found_idx = -1;
         for (uint8_t i=0; i < NUM_DEV; ++i) {
-            if ((pkt.DevSerNum == Devices[i].DevSerNum) || (Devices[i].DevSerNum == 0)) {
-                memcpy(&Devices[i], &pkt, sizeof(Radio_Packet_Type));
+            if (pkt.DevSerNum == Devices[i].DevSerNum) { /*|| (Devices[i].DevSerNum == 0)*/
+                Serial.print(F("FOUND "));
+                found_idx = i;
                 break;
             }
         }
+        
+        if (found_idx != -1) {
+            Serial.print(F("UPDATE "));
+            memcpy(&Devices[found_idx], &pkt, sizeof(Radio_Packet_Type));
+        } else {
+            for (uint8_t i=0; i < NUM_DEV; ++i) {
+                if (Devices[i].DevSerNum == 0) { /*|| (Devices[i].DevSerNum == 0)*/
+                    Serial.print(F("INSERT NEW "));
+                    memcpy(&Devices[i], &pkt, sizeof(Radio_Packet_Type));
+                    //break;
+                    break;
+                }
+            }
+        }
+        
+//         for (uint8_t i=0; i < NUM_DEV; ++i) {
+//             if (pkt.DevSerNum == Devices[i].DevSerNum) { /*|| (Devices[i].DevSerNum == 0)*/
+//                 found_idx = i;
+//                 //                 memcpy(&Devices[i], &pkt, sizeof(Radio_Packet_Type));
+//                 break;
+//             }
+//         }
     }
 }

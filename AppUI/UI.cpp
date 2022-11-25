@@ -33,13 +33,13 @@ uint8_t  lcd_page_count = 3;
 void do_UI() {
     if((millis() - time_lcd_redraw) > REDRAW_UI) {
         time_lcd_redraw = millis();
-
+        lcd.clear();
         uint8_t line = 0;
         for (uint8_t i=0; i < NUM_DEV; ++i) {
             if (Devices[i].DevSerNum) {
                 lcd.setCursor(0, line);
                 ++line;
-                lcd.clear();
+                
                 switch (lcd_page) {
                     case 0: {
                         fprintf_P(stderr, PSTR("%5u AIR: "), Devices[i].DevSerNum);
@@ -53,7 +53,7 @@ void do_UI() {
                     break;
                         
                     case 1: {
-                        fprintf_P(stderr, PSTR("Zivert %2.3f /%4u m"), Devices[i].Sen_GM_Zivert, Devices[i].Sen_GM_Cnt_Min);
+                        fprintf_P(stderr, PSTR("Zivert %2.3f/%4u m"), Devices[i].Sen_GM_Zivert, Devices[i].Sen_GM_Cnt_Min);
                     }
                     break;
                             
@@ -76,17 +76,15 @@ void do_UI() {
                     }
                     break;
                 }
-                
-                --lcd_page_count;
-                
-                if (lcd_page_count == 0) {
-                    ++lcd_page;
-                    if (lcd_page > 3) { lcd_page = 0; }
-                    lcd_page_count = 3;
-                }
-                
-                
             }
+
+        }
+        --lcd_page_count;
+        
+        if (lcd_page_count == 0) {
+            ++lcd_page;
+            if (lcd_page > 3) { lcd_page = 0; }
+            lcd_page_count = 3;
         }
     }
 }
